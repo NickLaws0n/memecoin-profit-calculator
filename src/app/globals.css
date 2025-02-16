@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-[#0B1120] text-white;
+}
+
+.card {
+  @apply bg-[#1A1F2E] rounded-xl shadow-lg;
+}
+
+.result-card {
+  @apply p-4 bg-gray-50 rounded-lg border border-gray-200;
+}
+
+.result-card h3 {
+  @apply text-sm font-medium text-gray-600 mb-1;
+}
+
+.result-card p {
+  @apply text-2xl font-bold;
+}
+
+/* Add other custom styles as needed */ 
