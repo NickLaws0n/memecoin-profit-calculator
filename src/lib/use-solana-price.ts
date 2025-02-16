@@ -5,24 +5,35 @@ import { useState, useEffect } from "react"
 export function useSolanaPrice() {
   const [price, setPrice] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     const fetchPrice = async () => {
       try {
-        const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd")
+        setLoading(true)
+        console.log('Fetching price...')
+        const response = await fetch('/api/solana-price')
+        
+        if (!response.ok) {
+          console.error('Response not OK:', await response.text())
+          throw new Error('Failed to fetch Solana price')
+        }
+        
         const data = await response.json()
+        console.log('Price data:', data)
         setPrice(data.solana.usd)
-        setLoading(false)
+        setError(null)
       } catch (err) {
-        setError("Failed to fetch Solana price")
+        console.error('Price fetch error:', err)
+        setError(err as Error)
+        setPrice(60.42)  // Fallback price - should still allow calculator to work
+      } finally {
         setLoading(false)
       }
     }
 
     fetchPrice()
-    const interval = setInterval(fetchPrice, 60000) // Update every minute
-
+    const interval = setInterval(fetchPrice, 60000)
     return () => clearInterval(interval)
   }, [])
 

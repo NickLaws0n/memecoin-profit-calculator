@@ -7,20 +7,27 @@ import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { useSolanaPrice } from "@/lib/use-solana-price"
 import { SlippageInput } from "./SlippageInput"
-import { WalletIcon, TrendingUpIcon, ClockIcon, CoinsIcon, Settings2Icon } from "lucide-react"
+import { WalletIcon, TrendingUpIcon, ClockIcon, CoinsIcon, Settings2Icon, DollarSign, CircleDotIcon as SolanaIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { SolanaIcon as SolanaIconComponent } from "./icons/SolanaIcon"
 
 type Currency = "USD" | "SOL"
 
 // Add type for event
 type InputChangeEvent = React.ChangeEvent<HTMLInputElement>
 
-const StatCard = ({ title, value, icon }: { title: string, value: string, icon: React.ReactNode }) => (
-  <div className="bg-card p-4 rounded-lg flex flex-col gap-2">
-    <div className="flex justify-between items-center">
-      <span className="text-text-secondary text-sm">{title}</span>
-      {icon}
+const StatCard = ({ title, value, icon, trend }: { title: string, value: string | React.ReactNode, icon: React.ReactNode, trend?: string }) => (
+  <div className="bg-white rounded-lg border border-gray-100 p-4">
+    <div className="flex justify-between items-start">
+      <div>
+        <h3 className="text-sm text-text-secondary font-normal mb-1">{title}</h3>
+        <div className="text-xl text-text-primary font-medium">{value}</div>
+      </div>
+      <div className="p-1.5 rounded-full bg-gray-50">{icon}</div>
     </div>
-    <span className="text-2xl font-bold text-text-primary">{value}</span>
+    {trend && (
+      <div className="text-sm text-text-secondary mt-2 font-normal">{trend}</div>
+    )}
   </div>
 )
 
@@ -33,7 +40,7 @@ export default function MemecoinCalculator() {
     bribery: 0.001,
   })
   const [slippage, setSlippage] = useState(0)
-  const [displayInvestmentValue, setDisplayInvestmentValue] = useState(investmentSol.toString())
+  const [displayInvestmentValue, setDisplayInvestmentValue] = useState("0.00")
   const { price: solPrice, loading, error } = useSolanaPrice()
 
   useEffect(() => {
@@ -95,7 +102,7 @@ export default function MemecoinCalculator() {
     return <div>Loading Solana price data...</div>
   }
 
-  if (error || !results) {
+  if (!results) {
     return <div>Error loading calculator. Please try again later.</div>
   }
 
@@ -103,88 +110,126 @@ export default function MemecoinCalculator() {
     if (displayCurrency === "USD" && solPrice !== null) {
       return `$${(value * solPrice).toFixed(2)}`
     } else {
-      return `◎${value.toFixed(4)}`
+      return <span className="flex items-center gap-1">
+        <SolanaIconComponent className="w-3.5 h-3.5 text-[#4285F4] inline" />
+        {value.toFixed(4)}
+      </span>
     }
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
+    <div className="w-full max-w-4xl mx-auto space-y-8 py-8">
       {/* Stats Grid */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-6">
         <StatCard
-          title="Investment Amount"
+          title="Initial Investment"
           value={formatValue(investmentSol)}
-          icon={<WalletIcon className="w-6 h-6 text-success" />}
+          icon={<WalletIcon className="w-4 h-4 text-text-secondary" />}
         />
         <StatCard
           title="Target Profit"
           value={`+${targetProfit}%`}
-          icon={<TrendingUpIcon className="w-6 h-6 text-blue-500" />}
+          icon={<TrendingUpIcon className="w-4 h-4 text-text-secondary" />}
         />
         <StatCard
           title="Required Increase"
           value={`+${results.requiredIncrease}%`}
-          icon={<ClockIcon className="w-6 h-6 text-success" />}
+          icon={<ClockIcon className="w-4 h-4 text-text-secondary" />}
         />
         <StatCard
           title="Total Fees"
           value={formatValue(results.totalFees)}
-          icon={<CoinsIcon className="w-6 h-6 text-error" />}
+          icon={<CoinsIcon className="w-4 h-4 text-text-secondary" />}
         />
       </div>
 
       {/* Trade Details Card */}
-      <Card className="bg-card text-text-primary">
-        <CardHeader>
-          <CardTitle>Trade Details</CardTitle>
+      <Card>
+        <CardHeader className="border-b border-gray-100 pb-6">
+          <CardTitle className="text-text-primary">Trade Details</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-6">
+        <CardContent className="grid grid-cols-2 gap-16 pt-8">
           <div>
-            <h3 className="text-text-secondary mb-4">Overview</h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="text-text-secondary">Expected Sell Price</div>
-              <div className="text-right font-semibold">{formatValue(results.expectedSellPrice)}</div>
-              <div className="text-text-secondary">Actual Sell Price</div>
-              <div className="text-right font-semibold text-success">{formatValue(results.actualSellPrice)}</div>
-              <div className="text-text-secondary">Slippage Impact</div>
-              <div className="text-right font-semibold text-warning">{formatValue(results.slippageImpact)}</div>
-              <div className="text-text-secondary">Actual Profit</div>
-              <div className="text-right font-semibold text-success">{formatValue(results.actualProfit)}</div>
+            <h3 className="text-text-secondary text-sm mb-6 font-medium">Overview</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary text-sm">Expected Sell Price</span>
+                <div className="w-[120px]">
+                  {formatValue(results.expectedSellPrice)}
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary text-sm">Actual Sell Price</span>
+                <div className="w-[120px] text-success">
+                  {formatValue(results.actualSellPrice)}
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary text-sm">Slippage Impact</span>
+                <div className="w-[120px] text-warning">
+                  {formatValue(results.slippageImpact)}
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary text-sm">Actual Profit</span>
+                <div className="w-[120px] text-success">
+                  {formatValue(results.actualProfit)}
+                </div>
+              </div>
             </div>
           </div>
           <div>
-            <h3 className="text-text-secondary mb-4">Fee Breakdown</h3>
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="text-text-secondary">Platform Fee (1%)</div>
-              <div className="text-right text-error">{formatValue(results.feeBreakdown.platform)}</div>
-              <div className="text-text-secondary">Priority Fee</div>
-              <div className="text-right text-error">{formatValue(results.feeBreakdown.priority)}</div>
-              <div className="text-text-secondary">Bribery Fee</div>
-              <div className="text-right text-error">{formatValue(results.feeBreakdown.bribery)}</div>
+            <h3 className="text-text-secondary text-sm mb-6 font-medium">Fee Breakdown</h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary text-sm">Platform Fee (1%)</span>
+                <div className="w-[120px] text-error">
+                  {formatValue(results.feeBreakdown.platform)}
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary text-sm">Priority Fee</span>
+                <div className="w-[120px] text-error">
+                  {formatValue(results.feeBreakdown.priority)}
+                </div>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-text-secondary text-sm">Bribery Fee</span>
+                <div className="w-[120px] text-error">
+                  {formatValue(results.feeBreakdown.bribery)}
+                </div>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Calculator Settings Card */}
-      <Card className="bg-card text-text-primary">
-        <CardHeader>
+      <Card>
+        <CardHeader className="border-b border-gray-100 pb-6">
           <div className="flex items-center gap-2">
-            <Settings2Icon className="w-5 h-5 text-text-secondary" />
+            <Settings2Icon className="w-4 h-4 text-[#5F6368]" />
             <CardTitle>Calculator Settings</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-8 pt-6">
           {/* Target Profit Buttons */}
-          <div>
-            <label className="text-text-secondary mb-2 block">Target Profit (%)</label>
-            <div className="grid grid-cols-4 gap-2">
+          <div className="space-y-4">
+            <label className="text-sm font-medium text-text-secondary">
+              Target Profit (%)
+            </label>
+            <div className="grid grid-cols-4 gap-3">
               {[25, 50, 75, 100].map((value) => (
                 <Button
                   key={value}
                   variant={targetProfit === value ? "default" : "outline"}
                   onClick={() => setTargetProfit(value)}
-                  className={targetProfit === value ? "bg-success text-white" : ""}
+                  className={cn(
+                    "h-10 rounded-lg",
+                    targetProfit === value 
+                      ? "bg-[#4285F4] text-white border-none"
+                      : "text-text-primary hover:bg-gray-50 border border-gray-200"
+                  )}
                 >
                   {value}%
                 </Button>
@@ -193,55 +238,78 @@ export default function MemecoinCalculator() {
           </div>
 
           {/* Investment Input */}
-          <div>
-            <label className="text-text-secondary mb-2 block">Initial Investment</label>
-            <div className="relative">
+          <div className="space-y-4">
+            <label className="text-sm font-medium text-text-secondary">
+              Initial Investment
+            </label>
+            <div className="relative flex items-center">
               <Input
                 value={displayInvestmentValue}
                 onChange={handleInvestmentChange}
-                className="input-dark pr-16"
+                className="pr-24 h-12 text-base text-text-primary placeholder-text-secondary text-right"
+                placeholder="0.00"
               />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setDisplayCurrency(prev => prev === "USD" ? "SOL" : "USD")}
-                className="absolute right-2 top-1/2 -translate-y-1/2"
-              >
-                {displayCurrency}
-              </Button>
+              <div className="absolute right-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDisplayCurrency(prev => prev === "USD" ? "SOL" : "USD")}
+                  className="h-8 px-3 min-w-[4rem] font-medium border-gray-200 hover:bg-gray-50 transition-colors flex items-center gap-1.5"
+                >
+                  {displayCurrency === "USD" ? (
+                    <>
+                      <DollarSign className="w-4 h-4 text-text-secondary" />
+                      <span className="text-text-primary">USD</span>
+                    </>
+                  ) : (
+                    <>
+                      <SolanaIconComponent className="w-5 h-5 text-[#4285F4]" />
+                      <span className="text-text-primary">SOL</span>
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
 
-          {/* Priority Fee Slider */}
-          <div>
-            <label>Priority Fee (SOL) - Optional, starts at 0.000</label>
-            <div className="flex items-center space-x-2">
-              <Slider
-                value={[fees.priority]}
-                onValueChange={(value: number[]) => setFees({ ...fees, priority: value[0] })}
-                min={0}
-                max={0.1}
-                step={0.001}
-                className="flex-grow"
-              />
-              <span className="w-20 text-right">{fees.priority.toFixed(3)} SOL</span>
+          {/* Priority Fee */}
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <label className="text-sm text-text-secondary font-normal">
+                Priority Fee (SOL)
+              </label>
+              <span className="text-sm text-text-secondary">
+                {fees.priority.toFixed(3)} SOL
+              </span>
             </div>
+            <Slider
+              value={[fees.priority]}
+              onValueChange={(value: number[]) => setFees({ ...fees, priority: value[0] })}
+              min={0}
+              max={0.1}
+              step={0.001}
+              className="py-2"
+            />
           </div>
 
-          {/* Bribery Fee Slider */}
-          <div>
-            <label>Bribery Fee (SOL) - Optional incentive</label>
-            <div className="flex items-center space-x-2">
-              <Slider
-                value={[fees.bribery]}
-                onValueChange={(value: number[]) => setFees({ ...fees, bribery: value[0] })}
-                min={0}
-                max={0.1}
-                step={0.001}
-                className="flex-grow"
-              />
-              <span className="w-20 text-right">{fees.bribery.toFixed(3)} SOL</span>
+          {/* Bribery Fee */}
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <label className="text-sm text-text-secondary font-normal">
+                Bribery Fee (SOL)
+              </label>
+              <span className="text-sm text-text-secondary">
+                {fees.bribery.toFixed(3)} SOL
+              </span>
             </div>
+            <Slider
+              value={[fees.bribery]}
+              onValueChange={(value: number[]) => setFees({ ...fees, bribery: value[0] })}
+              min={0}
+              max={0.1}
+              step={0.001}
+              className="py-2"
+            />
           </div>
 
           {/* Slippage Input */}

@@ -3,13 +3,34 @@
 @tailwind utilities;
 
 :root {
-  --background: #0B1120;
-  --card: #111827;
-  --card-lighter: #1F2937;
+  --background: #FAFAFA;
+  --card: #FFFFFF;
 }
 
 body {
-  @apply bg-background text-text-primary;
+  @apply bg-background text-text-primary antialiased;
+}
+
+.input-modern {
+  @apply bg-white border border-gray-200 rounded-lg px-4 py-2 text-text-primary;
+  @apply focus:ring-2 focus:ring-accent-blue focus:ring-opacity-20 focus:outline-none;
+}
+
+.stat-card {
+  @apply bg-white rounded-lg p-6 shadow-card;
+  @apply transition-all duration-200 hover:shadow-lg;
+}
+
+.metric-value {
+  @apply text-2xl font-semibold text-text-primary;
+}
+
+.metric-label {
+  @apply text-sm text-text-secondary;
+}
+
+.icon-container {
+  @apply p-2 rounded-full bg-opacity-10;
 }
 
 .input-dark {
@@ -38,6 +59,22 @@ body {
 
 .result-card p {
   @apply text-2xl font-bold;
+}
+
+.trend-indicator {
+  @apply inline-flex items-center gap-1 text-sm;
+}
+
+.trend-up {
+  @apply text-accent-green;
+}
+
+.trend-down {
+  @apply text-accent-red;
+}
+
+.card-gradient {
+  background: linear-gradient(to right bottom, #FFFFFF, #FAFAFA);
 }
 
 /* Add other custom styles as needed */ 

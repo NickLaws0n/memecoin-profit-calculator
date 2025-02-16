@@ -9,20 +9,35 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#0B1120',
+        background: '#FFFFFF',
         card: {
-          DEFAULT: '#111827',  // Dark card background
-          lighter: '#1F2937'   // Slightly lighter for inputs
+          DEFAULT: '#FAFAFA',
+          lighter: '#FFFFFF'
         },
-        success: '#22C55E',    // Green for positive values
-        error: '#EF4444',      // Red for negative/fees
+        success: {
+          light: '#E6F4EA',
+          DEFAULT: '#34A853'
+        },
+        error: {
+          light: '#FCE8E8',
+          DEFAULT: '#EA4335'
+        },
         warning: '#F59E0B',    // Yellow for warnings/slippage
         text: {
-          primary: '#FFFFFF',
-          secondary: '#9CA3AF'
+          primary: '#202124',
+          secondary: '#5F6368'
+        },
+        accent: {
+          blue: '#4285F4',
+          green: '#34A853',
+          red: '#EA4335',
+          yellow: '#FBBC05'
         }
       },
       borderRadius: 'lg',
+      boxShadow: {
+        card: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],
