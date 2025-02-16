@@ -24,23 +24,26 @@ export function SlippageInput({ slippage, setSlippage }: SlippageInputProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Label className="flex items-center">
-          Slippage (%)
+        <div className="flex items-center gap-2">
+          <label className="text-text-secondary">Slippage (%)</label>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <InfoIcon className="h-4 w-4 ml-2" />
+                <InfoIcon className="w-4 h-4 text-text-secondary" />
               </TooltipTrigger>
               <TooltipContent>
-                <p>
-                  Slippage is the difference between the expected price of a trade and the price at which the trade is
-                  executed.
-                </p>
+                <p className="text-sm">Expected price impact from market volatility</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </Label>
-        <span className={`font-semibold ${impact.color}`}>{impact.text} Impact</span>
+        </div>
+        <span className={`text-sm font-medium ${
+          Math.abs(slippage) <= 10 ? "text-success" : 
+          Math.abs(slippage) <= 50 ? "text-warning" : "text-error"
+        }`}>
+          {Math.abs(slippage) <= 10 ? "LOW" : 
+           Math.abs(slippage) <= 50 ? "MEDIUM" : "HIGH"} IMPACT
+        </span>
       </div>
       <div className="flex items-center space-x-2">
         <Slider
@@ -57,18 +60,17 @@ export function SlippageInput({ slippage, setSlippage }: SlippageInputProps) {
         </span>
       </div>
       <div className="flex space-x-2">
-        {presetValues.map((value) => (
+        {[-50, -10, 0, 10, 50].map((value) => (
           <Button
             key={value}
             variant="outline"
             size="sm"
             onClick={() => setSlippage(value)}
             className={`${
-              slippage === value ? "bg-primary text-primary-foreground" : ""
-            } ${value < 0 ? "text-red-500" : value > 0 ? "text-green-500" : ""}`}
+              slippage === value ? "bg-card-lighter" : ""
+            } ${value < 0 ? "text-error" : value > 0 ? "text-success" : ""}`}
           >
-            {value >= 0 ? "+" : ""}
-            {value}%
+            {value >= 0 ? "+" : ""}{value}%
           </Button>
         ))}
       </div>

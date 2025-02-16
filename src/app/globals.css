@@ -2,8 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --background: #0B1120;
+  --card: #111827;
+  --card-lighter: #1F2937;
+}
+
 body {
-  @apply bg-[#0B1120] text-white;
+  @apply bg-background text-text-primary;
+}
+
+.input-dark {
+  @apply bg-card-lighter border-none text-text-primary;
+}
+
+.slider-track {
+  @apply bg-card-lighter rounded-full;
+}
+
+.slider-range {
+  @apply bg-success;
 }
 
 .card {

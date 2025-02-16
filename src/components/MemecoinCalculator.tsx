@@ -7,11 +7,22 @@ import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { useSolanaPrice } from "@/lib/use-solana-price"
 import { SlippageInput } from "./SlippageInput"
+import { WalletIcon, TrendingUpIcon, ClockIcon, CoinsIcon, Settings2Icon } from "lucide-react"
 
 type Currency = "USD" | "SOL"
 
 // Add type for event
 type InputChangeEvent = React.ChangeEvent<HTMLInputElement>
+
+const StatCard = ({ title, value, icon }: { title: string, value: string, icon: React.ReactNode }) => (
+  <div className="bg-card p-4 rounded-lg flex flex-col gap-2">
+    <div className="flex justify-between items-center">
+      <span className="text-text-secondary text-sm">{title}</span>
+      {icon}
+    </div>
+    <span className="text-2xl font-bold text-text-primary">{value}</span>
+  </div>
+)
 
 export default function MemecoinCalculator() {
   const [displayCurrency, setDisplayCurrency] = useState<Currency>("USD")
@@ -97,102 +108,108 @@ export default function MemecoinCalculator() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto space-y-6">
-      <Card className="bg-gray-900 text-white">
-        <CardHeader>
-          <CardTitle>Set Your Target Profit</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-4 gap-4 mb-4">
-            {[25, 50, 75, 100].map((percent) => (
-              <Button
-                key={percent}
-                variant={targetProfit === percent ? "default" : "secondary"}
-                onClick={() => setTargetProfit(percent)}
-                className="w-full"
-              >
-                {percent}%
-              </Button>
-            ))}
-          </div>
-          <div className="bg-gray-800 p-4 rounded-lg">
-            <div className="text-4xl font-bold text-green-400">+{results.requiredIncrease}%</div>
-            <div className="text-gray-400">Required price increase to achieve {targetProfit}% profit</div>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="w-full max-w-4xl mx-auto space-y-6">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-4 gap-4">
+        <StatCard
+          title="Investment Amount"
+          value={formatValue(investmentSol)}
+          icon={<WalletIcon className="w-6 h-6 text-success" />}
+        />
+        <StatCard
+          title="Target Profit"
+          value={`+${targetProfit}%`}
+          icon={<TrendingUpIcon className="w-6 h-6 text-blue-500" />}
+        />
+        <StatCard
+          title="Required Increase"
+          value={`+${results.requiredIncrease}%`}
+          icon={<ClockIcon className="w-6 h-6 text-success" />}
+        />
+        <StatCard
+          title="Total Fees"
+          value={formatValue(results.totalFees)}
+          icon={<CoinsIcon className="w-6 h-6 text-error" />}
+        />
+      </div>
 
       {/* Trade Details Card */}
-      <Card className="bg-white text-gray-900">
-        <CardContent className="grid grid-cols-2 gap-6 pt-6">
+      <Card className="bg-card text-text-primary">
+        <CardHeader>
+          <CardTitle>Trade Details</CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-2 gap-6">
           <div>
-            <h3 className="font-semibold mb-2">Trade Details</h3>
+            <h3 className="text-text-secondary mb-4">Overview</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>Invested</div>
-              <div className="text-right font-semibold">{formatValue(investmentSol)}</div>
-              <div>Expected Sell Price</div>
-              <div className="text-right font-semibold text-blue-600">{formatValue(results.expectedSellPrice)}</div>
-              <div>Actual Sell Price</div>
-              <div className="text-right font-semibold text-green-600">{formatValue(results.actualSellPrice)}</div>
-              <div>Total Fees</div>
-              <div className="text-right font-semibold text-red-600">{formatValue(results.totalFees)}</div>
-              <div>Slippage Impact</div>
-              <div className="text-right font-semibold text-orange-600">{formatValue(results.slippageImpact)}</div>
-              <div>Actual Profit</div>
-              <div className="text-right font-semibold text-green-600">{formatValue(results.actualProfit)}</div>
+              <div className="text-text-secondary">Expected Sell Price</div>
+              <div className="text-right font-semibold">{formatValue(results.expectedSellPrice)}</div>
+              <div className="text-text-secondary">Actual Sell Price</div>
+              <div className="text-right font-semibold text-success">{formatValue(results.actualSellPrice)}</div>
+              <div className="text-text-secondary">Slippage Impact</div>
+              <div className="text-right font-semibold text-warning">{formatValue(results.slippageImpact)}</div>
+              <div className="text-text-secondary">Actual Profit</div>
+              <div className="text-right font-semibold text-success">{formatValue(results.actualProfit)}</div>
             </div>
           </div>
           <div>
-            <h3 className="font-semibold mb-2">Fee Breakdown</h3>
+            <h3 className="text-text-secondary mb-4">Fee Breakdown</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>Platform Fee (1%)</div>
-              <div className="text-right text-red-600">{formatValue(results.feeBreakdown.platform)}</div>
-              <div>Priority Fee</div>
-              <div className="text-right text-red-600">{formatValue(results.feeBreakdown.priority)}</div>
-              <div>Bribery Fee</div>
-              <div className="text-right text-red-600">{formatValue(results.feeBreakdown.bribery)}</div>
+              <div className="text-text-secondary">Platform Fee (1%)</div>
+              <div className="text-right text-error">{formatValue(results.feeBreakdown.platform)}</div>
+              <div className="text-text-secondary">Priority Fee</div>
+              <div className="text-right text-error">{formatValue(results.feeBreakdown.priority)}</div>
+              <div className="text-text-secondary">Bribery Fee</div>
+              <div className="text-right text-error">{formatValue(results.feeBreakdown.bribery)}</div>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Calculator Settings Card */}
-      <Card className="bg-white text-gray-900">
+      <Card className="bg-card text-text-primary">
         <CardHeader>
-          <CardTitle>Calculator Settings</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Investment Input */}
-          <div className="flex items-center justify-between">
-            <label htmlFor="investment">Initial Investment</label>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setDisplayCurrency((prev) => (prev === "USD" ? "SOL" : "USD"))}
-              className="w-8 h-8"
-            >
-              {displayCurrency === "USD" ? "$" : "◎"}
-            </Button>
+          <div className="flex items-center gap-2">
+            <Settings2Icon className="w-5 h-5 text-text-secondary" />
+            <CardTitle>Calculator Settings</CardTitle>
           </div>
-          <Input
-            id="investment"
-            type="text"
-            inputMode="decimal"
-            value={displayInvestmentValue}
-            onChange={(e: InputChangeEvent) => handleInvestmentChange(e)}
-            className="bg-gray-100"
-          />
-
-          {/* Target Profit Input */}
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Target Profit Buttons */}
           <div>
-            <label htmlFor="targetProfit">Target Profit (%)</label>
-            <Input
-              id="targetProfit"
-              type="number"
-              value={targetProfit}
-              onChange={(e: InputChangeEvent) => setTargetProfit(Number(e.target.value))}
-              className="bg-gray-100"
-            />
+            <label className="text-text-secondary mb-2 block">Target Profit (%)</label>
+            <div className="grid grid-cols-4 gap-2">
+              {[25, 50, 75, 100].map((value) => (
+                <Button
+                  key={value}
+                  variant={targetProfit === value ? "default" : "outline"}
+                  onClick={() => setTargetProfit(value)}
+                  className={targetProfit === value ? "bg-success text-white" : ""}
+                >
+                  {value}%
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Investment Input */}
+          <div>
+            <label className="text-text-secondary mb-2 block">Initial Investment</label>
+            <div className="relative">
+              <Input
+                value={displayInvestmentValue}
+                onChange={handleInvestmentChange}
+                className="input-dark pr-16"
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDisplayCurrency(prev => prev === "USD" ? "SOL" : "USD")}
+                className="absolute right-2 top-1/2 -translate-y-1/2"
+              >
+                {displayCurrency}
+              </Button>
+            </div>
           </div>
 
           {/* Priority Fee Slider */}
