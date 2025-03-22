@@ -2,13 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #FAFAFA;
-  --card: #FFFFFF;
+@layer base {
+  :root {
+    --background: #FFFFFF;
+    --ring-offset: #FFFFFF;
+  }
+
+  body {
+    @apply bg-background text-text-primary;
+  }
+
+  /* Remove number input spinners */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
 }
 
-body {
-  @apply bg-background text-text-primary antialiased;
+@layer utilities {
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  .animate-in {
+    animation-duration: 150ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }
 
 .input-modern {

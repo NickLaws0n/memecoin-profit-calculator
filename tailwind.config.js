@@ -1,31 +1,27 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const config = {
   darkMode: ["class"],
   content: [
-    './src/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
+        'accent-blue': '#4285F4',
+        'text-primary': '#1F2937',
+        'text-secondary': '#6B7280',
+        'success': '#10B981',
+        'warning': '#F59E0B',
+        'error': '#EF4444',
+        'success-light': '#D1FAE5',
+        'warning-light': '#FEF3C7',
+        'error-light': '#FEE2E2',
         background: '#FFFFFF',
         card: {
           DEFAULT: '#FAFAFA',
           lighter: '#FFFFFF'
-        },
-        success: {
-          light: '#E6F4EA',
-          DEFAULT: '#34A853'
-        },
-        error: {
-          light: '#FCE8E8',
-          DEFAULT: '#EA4335'
-        },
-        warning: '#F59E0B',    // Yellow for warnings/slippage
-        text: {
-          primary: '#202124',
-          secondary: '#5F6368'
         },
         accent: {
           blue: '#4285F4',
@@ -36,10 +32,15 @@ module.exports = {
       },
       borderRadius: 'lg',
       boxShadow: {
-        card: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-      }
+        'card': '0 1px 3px rgba(0,0,0,0.1)',
+      },
+      animation: {
+        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [],
 }
+
+export default config
 

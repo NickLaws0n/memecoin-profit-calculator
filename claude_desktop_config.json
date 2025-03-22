@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "agentai": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@agentai/mcp-server"
+      ],
+      "env": {
+        "API_TOKEN": "YOUR_API_TOKEN_HERE"
+      }
+    }
+  }
+} 

@@ -1,18 +1,28 @@
-export function formatNumber(num: number): string {
-  if (Math.abs(num) >= 1e9) {
-    return (num / 1e9).toFixed(2) + 'B';
+export function formatNumber(value: number, options: {
+  currency?: 'USD' | 'SOL'
+  minDecimals?: number
+  maxDecimals?: number
+  prefix?: string
+  suffix?: string
+} = {}) {
+  const {
+    currency = 'USD',
+    minDecimals = currency === 'USD' ? 2 : 4,
+    maxDecimals = currency === 'USD' ? 2 : 4,
+    prefix = currency === 'USD' ? '$' : '',
+    suffix = ''
+  } = options
+
+  // Handle very small numbers
+  if (Math.abs(value) < 0.0001) {
+    return `${prefix}0.${'0'.repeat(maxDecimals)}${suffix}`
   }
-  if (Math.abs(num) >= 1e6) {
-    return (num / 1e6).toFixed(2) + 'M';
-  }
-  if (Math.abs(num) >= 1e3) {
-    return (num / 1e3).toFixed(2) + 'K';
-  }
-  if (Math.abs(num) < 0.000001) {
-    return num.toExponential(6);
-  }
-  return num.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 6
-  });
+
+  const sign = value < 0 ? '-' : ''
+  const absValue = Math.abs(value)
+  
+  // Format the number with proper decimal places
+  const formatted = absValue.toFixed(maxDecimals)
+  
+  return `${sign}${prefix}${formatted}${suffix}`
 } 
